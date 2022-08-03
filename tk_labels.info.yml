@@ -1,0 +1,5 @@
+name: 'tk labels'
+type: module
+description: 'IslandoraCon Projects: TK Labels'
+core_version_requirement: ^8 || ^9
+package: 'IslandoraCon'
