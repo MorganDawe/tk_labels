@@ -2,6 +2,8 @@
 
 namespace Drupal\tk_labels\Plugin\Block;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\RequestException;
 use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
@@ -106,7 +108,25 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    * {@inheritdoc}
    */
   public function build() {
-  
+    $client = new Client();
+    $people = [];
+    $to_return = [];
+
+    $entity = \Drupal::routeMatch()->getParameter('node');
+    if ($entity) {
+      // Do the thing.
+    }	    
+
+    try {
+      $response = $client->get('https://swapi.dev/api/people');
+      $result = json_decode($response->getBody(), TRUE);
+      foreach($result['results'] as $item) {
+        $people[] = $item['name']; 
+      }
+    }
+    catch (RequestException $e) {
+      // log exception
+    }
     $to_return['test'] = [
       '#type' => 'checkbox',
       '#title' => t('test Checkbox?'),
@@ -118,7 +138,10 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    * {@inheritdoc}
    */
   public function defaultConfiguration() {
-    return [];
+    return [
+      'project_id' => "",
+      'api_base_url' => "https://anth-ja77-lc-dev-42d5.uc.r.appspot.com/api/v1"
+    ];
   }
 
   /**
@@ -134,8 +157,16 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
 
       return $found ? $value : NULL;
     };
-
-
+    $form['project_id'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Project ID'),
+      '#default_value' => $get_value('project_id'),
+    ];
+    $form['api_base_url'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('API Base URL'),
+      '#default_value' => $get_value('api_base_url'),
+    ];
     return $form;
   }
 
@@ -143,6 +174,8 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    * {@inheritdoc}
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
+    $this->configuration['api_base_url'] = $form_state->getValue('api_base_url');
+    $this->configuration['project_id'] = $form_state->getValue('project_id');
   }
 
 }
