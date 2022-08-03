@@ -112,25 +112,30 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
     $people = [];
     $to_return = [];
 
+    $current_config = $this->configuration;
+
     $entity = \Drupal::routeMatch()->getParameter('node');
     if ($entity) {
-      // Do the thing.
+      // Ensure this object has the proper field, in which to do the thing.
+      if ($entity->hasField('field_member_of') && !$entity->get('field_member_of')->isEmpty()) {
+	      try {
+          $request_url = $current_config['api_base_url'] . $current_config['api_base_url'];
+          $response = $client->get($request_url);
+          $result = json_decode($response->getBody(), TRUE);
+          foreach($result['results'] as $item) {
+            $people[] = $item['name'];
+	  }
+	  $to_return['test'] = [
+            '#type' => 'checkbox',
+            '#title' => t('test Checkbox?'),
+          ];
+        }
+        catch (RequestException $e) {
+          // log exception
+        }
+      }
     }	    
 
-    try {
-      $response = $client->get('https://swapi.dev/api/people');
-      $result = json_decode($response->getBody(), TRUE);
-      foreach($result['results'] as $item) {
-        $people[] = $item['name']; 
-      }
-    }
-    catch (RequestException $e) {
-      // log exception
-    }
-    $to_return['test'] = [
-      '#type' => 'checkbox',
-      '#title' => t('test Checkbox?'),
-    ];
     return $to_return;
   }
 
