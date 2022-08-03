@@ -114,27 +114,31 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
 
     $current_config = $this->configuration;
 
-    $entity = \Drupal::routeMatch()->getParameter('node');
+    $entity = TRUE;//\Drupal::routeMatch()->getParameter('node');
     if ($entity) {
       // Ensure this object has the proper field, in which to do the thing.
-      if ($entity->hasField('field_member_of') && !$entity->get('field_member_of')->isEmpty()) {
-	      try {
-          $request_url = $current_config['api_base_url'] . $current_config['api_base_url'];
+     // if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
+	try {
+		$request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
+		dsm($request_url);
           $response = $client->get($request_url);
-          $result = json_decode($response->getBody(), TRUE);
-          foreach($result['results'] as $item) {
-            $people[] = $item['name'];
+	  $result = json_decode($response->getBody(), TRUE);
+	  dsm($result);
+          foreach($result['notice'] as $item) {
+            $people[] = $item['img_url'];
+	    $to_return[] = [
+              '#markup' => '<img title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
+            ];
 	  }
-	  $to_return['test'] = [
-            '#type' => 'checkbox',
-            '#title' => t('test Checkbox?'),
-          ];
+	  dsm($people);
         }
         catch (RequestException $e) {
-          // log exception
+		// log exception
+	 // dsm($e);
         }
-      }
-    }	    
+     // }
+    }
+    dsm("Test"); 
 
     return $to_return;
   }
