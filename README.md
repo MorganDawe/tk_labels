@@ -1,5 +1,6 @@
-# TK Labels 
-**Warning** This is a Prototype! There is a [critical issue](https://github.com/MorganDawe/tk_labels/issues/7) that needs to be addressed before any adoption.
+# TK Labels
+**Warning** This is a Prototype!
+Special thanks to [Brandon Weigel][bweigel] for reporting a [critical issue](https://github.com/MorganDawe/tk_labels/issues/7) during IslandoraCon 2022.
 
 This module provides a block that will display [TK Labels][tklabels].
 ![Block](/images/block.png)
@@ -14,11 +15,11 @@ This module provides a block that can be configured at `admin/structure/block/ma
 
 **Note** This is a protoype: The API base URL is configurable to allow switching between the test and production APIs. It would be best to make this a select.
 
-For the block to display the contenty type needs to contain a field with the machine name `field_notice_type` that maps to the badge to display. 
+For the block to display the content type needs to contain a field with the machine name `tk_project_id` that maps to the project badges to display.
 
 ![Field Creation](/images/field.png)
 
-**Note** This is a protoype: A better method would be a custom multivalued field type coupled with a taxonomy migrated during module installation.
+**Note** This is a protoype: A better method would be a custom field type.
 
 ## Installation
 
