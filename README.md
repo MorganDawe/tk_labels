@@ -35,6 +35,7 @@ Current maintainers:
 ## Development
 
 If you would like to contribute to this module create an issue or pull request.
+There is a [list of projects](https://anth-ja77-lc-dev-42d5.uc.r.appspot.com/api/v1/projects/) that could be used for development.
 
 ## License
 
