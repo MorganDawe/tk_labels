@@ -1,6 +1,6 @@
-# TK Labels 
-**Warning**
-This is a Prototype!
+# TK Labels
+**Warning** This is a Prototype!
+Special thanks to [Brandon Weigel][bweigel] for reporting a [critical issue](https://github.com/MorganDawe/tk_labels/issues/7) during IslandoraCon 2022.
 
 This module provides a block that will display [TK Labels][tklabels].
 ![Block](/images/block.png)
@@ -12,6 +12,14 @@ It has been inspired by [islandora_tk_labels][i7tklabels]. Written by [Brandon W
 This module provides a block that can be configured at `admin/structure/block/manage/tklabelsblock`.
 
 ![Configuration](/images/config.png)
+
+**Note** This is a protoype: The API base URL is configurable to allow switching between the test and production APIs. It would be best to make this a select.
+
+For the block to display the content type needs to contain a field with the machine name `tk_project_id` that maps to the project badges to display.
+
+![Field Creation](/images/field.png)
+
+**Note** This is a protoype: A better method would be a custom field type.
 
 ## Installation
 

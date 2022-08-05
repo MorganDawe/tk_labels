@@ -100,20 +100,18 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
     $current_config = $this->configuration;
     $entity = \Drupal::routeMatch()->getParameter('node');
     if ($entity) {
-      // Ensure this object has the proper field, in which to do the thing.
-      if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
-	$notice_type = $entity->get('field_notice_type')->getValue()[0]['value'];
+      // Ensure this entity has the project ID field.
+      if ($entity->hasField('field_tk_project_id') && !$entity->get('field_tk_project_id')->isEmpty()) {
+	$field_project_id = $entity->get('field_tk_project_id')->getValue()[0]['value'];
 	try {
-          $request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
+          $request_url = $current_config['api_base_url'] . "/projects/" . $field_project_id;
           $response = $client->get($request_url);
 	  $result = json_decode($response->getBody(), TRUE);
 
 	  foreach($result['notice'] as $item) {
-            if ($notice_type == $item['notice_type']) {
               $to_return[] = [
                '#markup' => '<img class="tk-labels"  title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
               ];
-	    }
 	  }
         }
         catch (RequestException $e) {
@@ -130,13 +128,12 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    */
   public function defaultConfiguration() {
     return [
-      'project_id' => "",
-      'api_base_url' => "https://anth-ja77-lc-dev-42d5.uc.r.appspot.com/api/v1"
+      'api_base_url' => "https://localcontextshub.org/api/v1"
     ];
   }
 
   /**
-   * {@inheritdoc}
+   * Allow configuration of the block.
    */
   public function blockForm($form, FormStateInterface $form_state) {
     $form = parent::blockForm($form, $form_state);
@@ -148,11 +145,6 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
 
       return $found ? $value : NULL;
     };
-    $form['project_id'] = [
-      '#type' => 'textfield',
-      '#title' => $this->t('Project ID'),
-      '#default_value' => $get_value('project_id'),
-    ];
     $form['api_base_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('API Base URL'),
