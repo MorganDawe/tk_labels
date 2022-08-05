@@ -12,16 +12,13 @@ use Drupal\views\Views;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
-use Drupal\Core\Menu\MenuLinkTreeInterface;
-use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\user\UserInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Render\Markup;
-use Drupal\Core\Path\PathMatcher;
+use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Provides our header bar block.
+ * Provides our TK Labels block.
  *
  * @Block(
  *   id = "tk_labels",
@@ -39,13 +36,6 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   protected $formBuilder;
 
   /**
-   * Menu link tree builder, so we can build our menu structure.
-   *
-   * @var Drupal\Core\Menu\MenuLinkTreeInterface
-   */
-  protected $menuLinkTree;
-
-  /**
    * The entity type manager, so we can load some up.
    *
    * @var Drupal\Core\Entity\EntityTypeManagerInterface
@@ -53,38 +43,13 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   protected $entityTypeManager;
 
   /**
-   * Path matcher, used to verify current paths.
-   *
-   * @var Drupal\Core\Path\PathMatcher
-   */
-  protected $pathAliasManager;
-
-  /**
-   * The user for which we're to render the block.
-   *
-   * @var Drupal\user\UserEntityInterface
-   */
-  protected $currentUser;
-
-  /**
-   * File Storage.
-   *
-   * @var Drupal\file\FileStorage
-   */
-  protected $fileStorage;
-
-  /**
    * Constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_def, FormBuilderInterface $form_builder, MenuLinkTreeInterface $menu_link_tree, EntityTypeManagerInterface $entity_type_manager, UserInterface $current_user, PathMatcher $path_alias_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_def, FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_def);
 
     $this->formBuilder = $form_builder;
-    $this->menuLinkTree = $menu_link_tree;
     $this->entityTypeManager = $entity_type_manager;
-    $this->currentUser = $current_user;
-    $this->pathAliasManager = $path_alias_manager;
-    $this->fileStorage = $entity_type_manager->getStorage('file');
   }
 
   /**
@@ -97,11 +62,33 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
       $plugin_id,
       $plugin_definition,
       $container->get('form_builder'),
-      $container->get('menu.link_tree'),
-      $entity_type_manager,
-      $entity_type_manager->getStorage('user')->load($container->get('current_user')->id()),
-      $container->get('path.matcher')
+      $entity_type_manager
     );
+  }
+
+  /**
+   * Evaluates if an entity has the specified term(s).
+   *
+   * @param \Drupal\Core\Entity\EntityInterface $entity
+   *   The entity to evalute.
+   *
+   * @return bool
+   *   TRUE if entity has all the specified term(s), otherwise FALSE.
+   */
+  protected function entityHasTerm(EntityInterface $entity) {
+    foreach ($entity->referencedEntities() as $referenced_entity) {
+      if ($referenced_entity->getEntityTypeId() == 'taxonomy_term') {
+        $field = $referenced_entity->get(IslandoraUtils::EXTERNAL_URI_FIELD);
+        if (!$field->isEmpty()) {
+          $link = $field->first()->getValue();
+          if ($link['uri'] == $this->configuration['uri']) {
+            return $this->isNegated() ? FALSE : TRUE;
+          }
+        }
+      }
+    }
+
+    return $this->isNegated() ? TRUE : FALSE;
   }
 
   /**
@@ -114,26 +101,32 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
     $current_config = $this->configuration;
 
     $entity = TRUE;//\Drupal::routeMatch()->getParameter('node');
+    $node = \Drupal::routeMatch()->getParameter('node');
+    dsm($node);
     if ($entity) {
+	    
       // Ensure this object has the proper field, in which to do the thing.
-     // if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
+      if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
+	$notice_type = entity->get('field_notice_type')->getValue();
+        dsm($notice_type);
 	try {
           $request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
           $response = $client->get($request_url);
 	  $result = json_decode($response->getBody(), TRUE);
-          foreach($result['notice'] as $item) {
-	    $to_return[] = [
-              '#markup' => '<img title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
-            ];
+
+	  foreach($result['notice'] as $item) {
+            if ($notice_type == $item['notice_type']) {
+              dsm($notice_type);
+              $to_return[] = [
+               '#markup' => '<img title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
+              ];
+	    }
 	  }
         }
         catch (RequestException $e) {
-		// log exception
-	 // dsm($e);
+          // TODO: log exception
         }
-     // }
     }
-    dsm("Test"); 
 
     return $to_return;
   }
