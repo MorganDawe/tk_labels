@@ -8,13 +8,10 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\views\Views;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Url;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Entity\EntityInterface;
 
 /**
@@ -92,7 +89,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   }
 
   /**
-   * {@inheritdoc}
+   * Display TK Labels.
    */
   public function build() {
     $client = new Client();
@@ -102,21 +99,21 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
     if ($entity) {
       // Ensure this entity has the project ID field.
       if ($entity->hasField('field_tk_project_id') && !$entity->get('field_tk_project_id')->isEmpty()) {
-	$field_project_id = $entity->get('field_tk_project_id')->getValue()[0]['value'];
-	try {
+        $field_project_id = $entity->get('field_tk_project_id')->getValue()[0]['value'];
+        try {
           $request_url = $current_config['api_base_url'] . "/projects/" . $field_project_id;
           $response = $client->get($request_url);
-	  $result = json_decode($response->getBody(), TRUE);
+          $result = json_decode($response->getBody(), TRUE);
 
-	  foreach($result['notice'] as $item) {
-              $to_return[] = [
-               '#markup' => '<img class="tk-labels"  title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
-              ];
-	  }
+          foreach ($result['notice'] as $item) {
+            $to_return[] = [
+              '#markup' => '<img class="tk-labels"  title="' . $item['default_text'] . '" src="' . $item['img_url'] . '"></img>',
+            ];
+          }
         }
         catch (RequestException $e) {
-          // TODO: log exception
-	}
+          // @todo Log exception.
+        }
       }
     }
 
@@ -128,7 +125,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    */
   public function defaultConfiguration() {
     return [
-      'api_base_url' => "https://localcontextshub.org/api/v1"
+      'api_base_url' => "https://localcontextshub.org/api/v1",
     ];
   }
 
@@ -161,4 +158,3 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   }
 
 }
-
