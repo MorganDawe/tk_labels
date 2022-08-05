@@ -109,7 +109,6 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    */
   public function build() {
     $client = new Client();
-    $people = [];
     $to_return = [];
 
     $current_config = $this->configuration;
@@ -119,18 +118,14 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
       // Ensure this object has the proper field, in which to do the thing.
      // if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
 	try {
-		$request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
-		dsm($request_url);
+          $request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
           $response = $client->get($request_url);
 	  $result = json_decode($response->getBody(), TRUE);
-	  dsm($result);
           foreach($result['notice'] as $item) {
-            $people[] = $item['img_url'];
 	    $to_return[] = [
               '#markup' => '<img title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
             ];
 	  }
-	  dsm($people);
         }
         catch (RequestException $e) {
 		// log exception
