@@ -8,14 +8,12 @@ use Drupal\Core\Block\BlockBase;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\views\Views;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Component\Utility\NestedArray;
-use Drupal\Core\Url;
-use Drupal\Core\Render\Markup;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Provides our TK Labels block.
@@ -43,13 +41,21 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   protected $entityTypeManager;
 
   /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * Constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_def, FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_def, FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager, RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_def);
 
     $this->formBuilder = $form_builder;
     $this->entityTypeManager = $entity_type_manager;
+    $this->routeMatch = $route_match;
   }
 
   /**
@@ -62,7 +68,8 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
       $plugin_id,
       $plugin_definition,
       $container->get('form_builder'),
-      $entity_type_manager
+      $entity_type_manager,
+      $container->get('current_route_match')
     );
   }
 
@@ -92,31 +99,31 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   }
 
   /**
-   * {@inheritdoc}
+   * Display TK Labels.
    */
   public function build() {
     $client = new Client();
     $to_return = [];
     $current_config = $this->configuration;
-    $entity = \Drupal::routeMatch()->getParameter('node');
+    $entity = $this->routeMatch->getParameter('node');
     if ($entity) {
       // Ensure this entity has the project ID field.
       if ($entity->hasField('field_tk_project_id') && !$entity->get('field_tk_project_id')->isEmpty()) {
-	$field_project_id = $entity->get('field_tk_project_id')->getValue()[0]['value'];
-	try {
+        $field_project_id = $entity->get('field_tk_project_id')->getValue()[0]['value'];
+        try {
           $request_url = $current_config['api_base_url'] . "/projects/" . $field_project_id;
           $response = $client->get($request_url);
-	  $result = json_decode($response->getBody(), TRUE);
+          $result = json_decode($response->getBody(), TRUE);
 
-	  foreach($result['notice'] as $item) {
-              $to_return[] = [
-               '#markup' => '<img class="tk-labels"  title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
-              ];
-	  }
+          foreach ($result['notice'] as $item) {
+            $to_return[] = [
+              '#markup' => '<img class="tk-labels"  title="' . $item['default_text'] . '" src="' . $item['img_url'] . '"></img>',
+            ];
+          }
         }
         catch (RequestException $e) {
-          // TODO: log exception
-	}
+          // @todo Log exception.
+        }
       }
     }
 
@@ -128,7 +135,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    */
   public function defaultConfiguration() {
     return [
-      'api_base_url' => "https://localcontextshub.org/api/v1"
+      'api_base_url' => "https://localcontextshub.org/api/v1",
     ];
   }
 
@@ -161,4 +168,3 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   }
 
 }
-
