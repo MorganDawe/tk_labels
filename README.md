@@ -12,11 +12,13 @@ This module provides a block that can be configured at `admin/structure/block/ma
 
 ![Configuration](/images/config.png)
 
+**Note** This is a protoype: The API base URL is configurable to allow switching between the test and production APIs. It would be best to make this a select.
+
 For the block to display the contenty type needs to contain a field with the machine name `field_notice_type` that maps to the badge to display. 
 
 ![Field Creation](/images/field.png)
 
-**Note** This is a protoype: A better method would be a custom field type coupled with a taxonomy migrated during module installation.
+**Note** This is a protoype: A better method would be a custom multivalued field type coupled with a taxonomy migrated during module installation.
 
 ## Installation
 
