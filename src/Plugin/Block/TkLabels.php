@@ -128,7 +128,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    */
   public function defaultConfiguration() {
     return [
-      'api_base_url' => "https://anth-ja77-lc-dev-42d5.uc.r.appspot.com/api/v1"
+      'api_base_url' => "https://localcontextshub.org/api/v1"
     ];
   }
 
