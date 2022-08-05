@@ -13,6 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Form\FormBuilderInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Routing\RouteMatchInterface;
 
 /**
  * Provides our TK Labels block.
@@ -40,13 +41,21 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   protected $entityTypeManager;
 
   /**
+   * The route match.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  protected $routeMatch;
+
+  /**
    * Constructor.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_def, FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_def, FormBuilderInterface $form_builder, EntityTypeManagerInterface $entity_type_manager, RouteMatchInterface $route_match) {
     parent::__construct($configuration, $plugin_id, $plugin_def);
 
     $this->formBuilder = $form_builder;
     $this->entityTypeManager = $entity_type_manager;
+    $this->routeMatch = $route_match;
   }
 
   /**
@@ -59,7 +68,8 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
       $plugin_id,
       $plugin_definition,
       $container->get('form_builder'),
-      $entity_type_manager
+      $entity_type_manager,
+      $container->get('current_route_match')
     );
   }
 
@@ -95,7 +105,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
     $client = new Client();
     $to_return = [];
     $current_config = $this->configuration;
-    $entity = \Drupal::routeMatch()->getParameter('node');
+    $entity = $this->routeMatch->getParameter('node');
     if ($entity) {
       // Ensure this entity has the project ID field.
       if ($entity->hasField('field_tk_project_id') && !$entity->get('field_tk_project_id')->isEmpty()) {
