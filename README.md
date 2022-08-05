@@ -5,8 +5,7 @@ This is a Prototype!
 This module provides a block that will display [TK Labels][tklabels].
 ![Block](/images/block.png)
 
-It has been inspired by [islandora_tk_labels][i7tklabels]. Written by [Brandon Weigel
-][bweigel].
+It has been inspired by [islandora_tk_labels][i7tklabels]. Written by [Brandon Weigel][bweigel].
 
 ## Configuration
 
