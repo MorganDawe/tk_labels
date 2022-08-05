@@ -107,7 +107,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
 	    
       // Ensure this object has the proper field, in which to do the thing.
       if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
-	$notice_type = $entity->get('field_notice_type')->getValue();
+	$notice_type = $entity->get('field_notice_type')->getValue()[0]['value'];
         dsm($notice_type);
 	try {
           $request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
