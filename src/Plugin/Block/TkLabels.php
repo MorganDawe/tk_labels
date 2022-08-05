@@ -97,18 +97,12 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
   public function build() {
     $client = new Client();
     $to_return = [];
-
     $current_config = $this->configuration;
-
     $entity = \Drupal::routeMatch()->getParameter('node');
-    $node = \Drupal::routeMatch()->getParameter('node');
-    dsm($node);
     if ($entity) {
-	    
       // Ensure this object has the proper field, in which to do the thing.
       if ($entity->hasField('field_notice_type') && !$entity->get('field_notice_type')->isEmpty()) {
 	$notice_type = $entity->get('field_notice_type')->getValue()[0]['value'];
-        dsm($notice_type);
 	try {
           $request_url = $current_config['api_base_url'] . "/projects/" . $current_config['project_id'];
           $response = $client->get($request_url);
@@ -116,7 +110,6 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
 
 	  foreach($result['notice'] as $item) {
             if ($notice_type == $item['notice_type']) {
-              dsm($notice_type);
               $to_return[] = [
                '#markup' => '<img title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
               ];
