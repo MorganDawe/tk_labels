@@ -1,6 +1,5 @@
 # TK Labels 
-**Warning**
-This is a Prototype!
+**Warning** This is a Prototype!
 
 This module provides a block that will display [TK Labels][tklabels].
 ![Block](/images/block.png)
@@ -12,6 +11,12 @@ It has been inspired by [islandora_tk_labels][i7tklabels]. Written by [Brandon W
 This module provides a block that can be configured at `admin/structure/block/manage/tklabelsblock`.
 
 ![Configuration](/images/config.png)
+
+For the block to display the contenty type needs to contain a field with the machine name `field_notice_type` that maps to the badge to display. 
+
+![Field Creation](/images/field.png).
+
+**Note** This is a protoype: A better method would be a custom field type coupled with a taxonomy migrated during module installation.
 
 ## Installation
 
