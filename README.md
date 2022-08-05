@@ -9,7 +9,7 @@ It has been inspired by [islandora_tk_labels][i7tklabels]. Written by [Brandon W
 ## Configuration
 
 This module provides a block that can be configured at `admin/structure/block/manage/tklabelsblock`.
-![Configuration][/images/config.png]
+![Configuration](/images/config.png)
 
 ## Installation
 
