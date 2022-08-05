@@ -3,12 +3,15 @@
 This is a Prototype!
 
 This module provides a block that will display [TK Labels][tklabels].
+![Block](/images/block.png)
+
 It has been inspired by [islandora_tk_labels][i7tklabels]. Written by [Brandon Weigel
 ][bweigel].
 
 ## Configuration
 
 This module provides a block that can be configured at `admin/structure/block/manage/tklabelsblock`.
+
 ![Configuration](/images/config.png)
 
 ## Installation
