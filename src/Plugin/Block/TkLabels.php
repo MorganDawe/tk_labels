@@ -111,7 +111,7 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
 	  foreach($result['notice'] as $item) {
             if ($notice_type == $item['notice_type']) {
               $to_return[] = [
-               '#markup' => '<img title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
+               '#markup' => '<img class="tk-labels"  title="' . $item['default_text'] . '" src="' . $item['img_url']  . '"></img>',
               ];
 	    }
 	  }
