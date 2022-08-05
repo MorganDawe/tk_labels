@@ -1,5 +1,5 @@
 # TK Labels 
-**Warning** This is a Prototype!
+**Warning** This is a Prototype! There is a [critical issue](https://github.com/MorganDawe/tk_labels/issues/7) that needs to be addressed before any adoption.
 
 This module provides a block that will display [TK Labels][tklabels].
 ![Block](/images/block.png)
