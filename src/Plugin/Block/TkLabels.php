@@ -158,7 +158,6 @@ class TkLabels extends BlockBase implements BlockPluginInterface, ContainerFacto
    */
   public function blockSubmit($form, FormStateInterface $form_state) {
     $this->configuration['api_base_url'] = $form_state->getValue('api_base_url');
-    $this->configuration['project_id'] = $form_state->getValue('project_id');
   }
 
 }
