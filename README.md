@@ -25,16 +25,22 @@ For the block to display the content type needs to contain a field with the mach
 
 Install as usual, see [this][install] for further information.
 
+## Troubleshooting/Issues
+
+Having problems or solved a problem? Contact
+[discoverygarden](http://support.discoverygarden.ca).
+
 ## Maintainers/Sponsors
 
 Current maintainers:
 
-* Morgan Dawe
-* William Panting
+* [discoverygarden](http://www.discoverygarden.ca)
 
 ## Development
 
-If you would like to contribute to this module create an issue or pull request.
+If you would like to contribute to this module create an issue, pull request
+and or contact
+[discoverygarden](http://support.discoverygarden.ca).
 There is a [list of projects](https://anth-ja77-lc-dev-42d5.uc.r.appspot.com/api/v1/projects/) that could be used for development.
 
 ## License
